@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Your Daily Care 💕</title>
+    <link rel="icon" type="png" href="iconci.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ffb6c1, #ffd1dc, #ffe4e1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Floating hearts animation */
+        .heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.6);
+            font-size: 20px;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-20px) rotate(10deg); opacity: 1; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        /* Music controls */
+        .music-controls {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .music-btn {
+            background: linear-gradient(145deg, #ff69b4, #ff1493);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.5);
+        }
+
+        .music-info {
+            font-size: 0.9em;
+            color: #d63384;
+            font-weight: bold;
+        }
+
+        .rating-section {
+            margin: 30px 0;
+        }
+
+        .rating-title {
+            font-size: 1.4em;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+
+        .rating-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .rating-btn {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border: 2px solid #dee2e6;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .rating-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .rating-btn.selected {
+            background: linear-gradient(145deg, #ff69b4, #ff1493);
+            color: white;
+            border-color: #ff1493;
+            transform: scale(1.05);
+        }
+
+        /* Response area - hidden by default */
+        .response-area {
+            min-height: 200px;
+            background: rgba(255, 240, 245, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            transition: all 0.5s ease;
+            /* Hide initially */
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Show response area */
+        .response-area.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .response-message {
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #495057;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        .suggestions {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .suggestions h3 {
+            color: #d63384;
+            margin-bottom: 15px;
+        }
+
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .suggestions li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(214, 51, 132, 0.2);
+        }
+
+        .suggestions li:before {
+            content: "💕 ";
+            margin-right: 8px;
+        }
+
+        /* Responsive design for mobile */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .rating-buttons {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .rating-btn {
+                padding: 12px 8px;
+                font-size: 0.95em;
+            }
+            
+            .music-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .music-info {
+                font-size: 0.8em;
+            }
+            
+            .response-message {
+                font-size: 1.1em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.7em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+            
+            .heart {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts -->
+    <div class="heart" style="top: 10%; left: 10%;">💖</div>
+    <div class="heart" style="top: 20%; right: 15%; animation-delay: 1s;">💕</div>
+    <div class="heart" style="top: 60%; left: 5%; animation-delay: 2s;">💗</div>
+    <div class="heart" style="top: 70%; right: 10%; animation-delay: 3s;">💝</div>
+    <div class="heart" style="top: 40%; right: 20%; animation-delay: 4s;">🌸</div>
+
+    <div class="container">
+        <h1>💕 Your Daily Care 💕</h1>
+        <p class="subtitle">How are you feeling today, beautiful? 🌸</p>
+        
+        <!-- Music Controls -->
+        <div class="music-controls">
+            <button class="music-btn" id="playBtn" title="Play relaxing music">🎵</button>
+            <div class="music-info" id="musicInfo">Click to play soothing music</div>
+            <button class="music-btn" id="stopBtn" title="Stop music" style="display: none;">⏹️</button>
+        </div>
+        
+        <div class="rating-section">
+            <div class="rating-title">Rate your cramps (1 = worst, 8 = best):</div>
+            <div class="rating-buttons">
+                <button class="rating-btn" data-rating="1">1<br>😣</button>
+                <button class="rating-btn" data-rating="2">2<br>😖</button>
+                <button class="rating-btn" data-rating="3">3<br>😔</button>
+                <button class="rating-btn" data-rating="4">4<br>😐</button>
+                <button class="rating-btn" data-rating="5">5<br>🙂</button>
+                <button class="rating-btn" data-rating="6">6<br>😊</button>
+                <button class="rating-btn" data-rating="7">7<br>😄</button>
+                <button class="rating-btn" data-rating="8">8<br>🥰</button>
+            </div>
+        </div>
+
+        <!-- Response area - hidden initially -->
+        <div class="response-area" id="responseArea">
+            <div class="emoji" id="responseEmoji"></div>
+            <div class="response-message" id="responseMessage"></div>
+            <div class="suggestions" id="suggestions"></div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" src="EVERYTHING.mp3" loop></audio>
+
+    <script>
+        // Get all the elements we need
+        const ratingButtons = document.querySelectorAll('.rating-btn');
+        const responseArea = document.getElementById('responseArea');
+        const responseEmoji = document.getElementById('responseEmoji');
+        const responseMessage = document.getElementById('responseMessage');
+        const suggestions = document.getElementById('suggestions');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const musicInfo = document.getElementById('musicInfo');
+
+        // Audio context for playing music
+        let audioContext;
+        let oscillator;
+        let gainNode;
+        let isPlaying = false;
+
+        // All the caring responses for each rating
+        const responses = {
+            1: {
+                emoji: "🤗💕",
+                message: "Oh sweetheart, I know it's really tough right now. You're so strong for getting through this. Remember, this pain is temporary and you're absolutely amazing! 💪✨",
+                suggestions: [
+                    "Take a warm bath with lavender oil",
+                    "Use a heating pad on your lower back",
+                    "Try gentle yoga or stretching",
+                    "Drink chamomile tea",
+                    "Listen to your favorite calming music",
+                    "Take deep breaths and rest"
+                ]
+            },
+            2: {
+                emoji: "🫂💖",
+                message: "I can see you're having a rough time, but you're handling it like the warrior you are! Take it easy today and be extra kind to yourself. 🌸",
+                suggestions: [
+                    "Stay hydrated with warm drinks",
+                    "Eat some dark chocolate (it helps!)",
+                    "Watch your favorite comfort movie",
+                    "Do some light meditation",
+                    "Ask for a gentle massage",
+                    "Take a short walk if you feel up to it"
+                ]
+            },
+            3: {
+                emoji: "🌷💜",
+                message: "You're doing better than yesterday! Keep taking care of yourself - you deserve all the comfort and love in the world. 💕",
+                suggestions: [
+                    "Try some herbal tea blends",
+                    "Do gentle stretching exercises",
+                    "Write in a journal about your feelings",
+                    "Listen to uplifting podcasts",
+                    "Prepare a nutritious, comforting meal",
+                    "Practice gratitude for small wins"
+                ]
+            },
+            4: {
+                emoji: "🌺💚",
+                message: "You're in the middle ground - not great, but manageable! You're so resilient. Let's focus on some gentle self-care today. ✨",
+                suggestions: [
+                    "Go for a gentle walk outside",
+                    "Try some light cooking or baking",
+                    "Call a friend for a chat",
+                    "Do some creative activities",
+                    "Practice breathing exercises",
+                    "Organize something small (it feels good!)"
+                ]
+            },
+            5: {
+                emoji: "🌟💛",
+                message: "You're doing pretty well today! This is a good day to appreciate how strong your body is and treat yourself with kindness. 🌈",
+                suggestions: [
+                    "Take a nice shower with your favorite products",
+                    "Try a new recipe you've been wanting to make",
+                    "Spend time on a hobby you love",
+                    "Connect with friends or family",
+                    "Do some light exercise you enjoy",
+                    "Plan something fun for tomorrow"
+                ]
+            },
+            6: {
+                emoji: "✨🧡",
+                message: "Look at you feeling good! Your body is amazing and you should celebrate these better days. Keep that positive energy flowing! 💫",
+                suggestions: [
+                    "Engage in your favorite physical activity",
+                    "Try a new restaurant or cuisine",
+                    "Spend time outdoors in nature",
+                    "Work on a passion project",
+                    "Connect with people who make you happy",
+                    "Treat yourself to something special"
+                ]
+            },
+            7: {
+                emoji: "🎉❤️",
+                message: "You're feeling great today! I'm so happy to see you thriving. You deserve all these good days and so much more! 🥳",
+                suggestions: [
+                    "Plan a fun activity or outing",
+                    "Try something new you've been curious about",
+                    "Exercise in a way that makes you feel strong",
+                    "Spend quality time with loved ones",
+                    "Work on goals that excite you",
+                    "Celebrate your strength and resilience"
+                ]
+            },
+            8: {
+                emoji: "🌈💖✨",
+                message: "You're absolutely glowing today! I love seeing you feel this amazing. You're incredible, and I hope you know how special you are! 🦋💕",
+                suggestions: [
+                    "Dance to your favorite songs",
+                    "Plan an adventure or trip",
+                    "Try something challenging and fun",
+                    "Share your positive energy with others",
+                    "Work on big dreams and goals",
+                    "Document this beautiful day in photos or writing"
+                ]
+            }
+        };
+
+        playBtn.addEventListener('click', () => {
+            bgMusic.play();
+            playBtn.style.display = 'none';
+            stopBtn.style.display = 'inline-block';
+            musicInfo.textContent = '🎵 Playing your music';
+        });
+      
+        stopBtn.addEventListener('click', () => {
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            playBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            musicInfo.textContent = 'Click to play soothing music';
+        });
+
+        // Rating button events
+        ratingButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove selected class from all buttons
+                ratingButtons.forEach(btn => btn.classList.remove('selected'));
+                
+                // Add selected class to clicked button
+                this.classList.add('selected');
+                
+                // Get the rating value
+                const rating = parseInt(this.dataset.rating);
+                
+                // Show the response
+                showResponse(rating);
+            });
+        });
+
+        // Show response function
+        function showResponse(rating) {
+            const response = responses[rating];
+            
+            // Update the content
+            responseEmoji.textContent = response.emoji;
+            responseMessage.textContent = response.message;
+            
+            // Create suggestions list
+            suggestions.innerHTML = `
+                <h3>💕 Comfort Suggestions:</h3>
+                <ul>
+                    ${response.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
+                </ul>
+            `;
+            
+            // Show the response area with animation
+            responseArea.classList.add('show');
+            
+            // Change background color based on rating
+            const colors = {
+                1: 'linear-gradient(135deg, #ffcccb, #ffe4e1)',
+                2: 'linear-gradient(135deg, #ffd1dc, #ffe4e1)',
+                3: 'linear-gradient(135deg, #ffb6c1, #ffd1dc)',
+                4: 'linear-gradient(135deg, #dda0dd, #e6e6fa)',
+                5: 'linear-gradient(135deg, #98fb98, #f0fff0)',
+                6: 'linear-gradient(135deg, #87ceeb, #e0f6ff)',
+                7: 'linear-gradient(135deg, #ffd700, #fffacd)',
+                8: 'linear-gradient(135deg, #ff69b4, #ffb6c1)'
+            };
+            
+            document.body.style.background = colors[rating];
+        }
+
+        // Add sparkle effects
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.innerHTML = '✨';
+            sparkle.style.position = 'absolute';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.fontSize = '20px';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.animation = 'float 3s ease-out forwards';
+            sparkle.style.zIndex = '1';
+            
+            document.body.appendChild(sparkle);
+            
+            // Remove after animation
+            setTimeout(() => sparkle.remove(), 3000);
+        }
+
+        // Create sparkles periodically
+        setInterval(createSparkle, 2000);
+    </script>
+</body>
+</html>
